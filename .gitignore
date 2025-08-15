@@ -1,0 +1,12 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code（全消し→この2つだけ許可）
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Node/ビルド
+node_modules/
+dist/
