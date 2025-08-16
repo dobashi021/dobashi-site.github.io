@@ -143,6 +143,7 @@
 
 }
 
+/* 20250816 sr-only追加 */
 /* まだ無ければ sr-only を追加 */
 .sr-only{
   position:absolute!important; width:1px; height:1px; padding:0; margin:-1px;
