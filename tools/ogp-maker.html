@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OGP Maker</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+  :root{
+    --blue:#2B6CB0; --yellow:#FFD966; --safe:60px;
+  }
+  body{font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+       background:#f5f5f5; margin:0; padding:24px}
+  .wrap{max-width:1280px; margin:auto}
+  .toolbar{margin:0 0 12px; display:flex; gap:8px; align-items:center}
+  button{padding:10px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; cursor:pointer}
+  #stage{
+    width:1200px; height:630px; position:relative; background:var(--yellow);
+    box-shadow:0 8px 28px rgba(0,0,0,.15); overflow:hidden;
+  }
+  /* 安全域 */
+  .stage-inner{position:absolute; inset:var(--safe)}
+  /* タイトル帯（青） */
+  .ribbon{
+  position:absolute; left:60px; right:510px; top:120px;
+  background:#2B6CB0; border-radius:18px; padding:28px 32px;
+  box-shadow:0 10px 24px rgba(43,108,176,.35); min-height:340px;
+  display:flex; flex-direction:column; justify-content:center;
+}
+  .title{color:#fff; font-weight:900; font-size:50px; line-height:1.2; letter-spacing:.5px; margin:0}
+  .sub{color:#fff; opacity:.95; font-weight:700; font-size:30px; margin:14px 0 0}
+  /* ロゴ画像（右側） */
+  .logo{
+    position:absolute; right: 90px; top: 100px; width:420px; height:420px; object-fit:cover;
+    filter: drop-shadow(0 10px 24px rgba(0,0,0,.25));
+    background:#fff; border-radius:50%;
+  }
+  /* 補助テキスト */
+  .tag{
+    position:absolute; left:var(--safe); top:72px; color:#1f2937; font-weight:700;
+    background:#fff; padding:10px 16px; border-radius:999px; font-size:24px;
+    box-shadow:0 6px 16px rgba(0,0,0,.12);
+  }
+  /* 余白ガイド（必要なら表示） */
+  .guide{position:absolute; inset:var(--safe); border:2px dashed rgba(0,0,0,.08); pointer-events:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="toolbar">
+    <label>ロゴ画像を差し替え：<input type="file" id="file" accept="image/*"></label>
+    <button id="save">PNGとして保存</button>
+    <label><input type="checkbox" id="toggleGuide"> 余白ガイド表示</label>
+  </div>
+
+  <!-- キャンバス -->
+  <div id="stage" aria-label="OGP preview">
+    <div class="tag">団地のみなさまの味方です</div>
+
+    <img id="logo" class="logo" src="../assets/img/doba-logo.png" alt="どば先生ロゴ">
+
+    <div class="ribbon">
+      <h1 class="title">みんなのITサポーター<br>どばせんせい</h1>
+<p class="sub">
+  <span class="line">東京都北区周辺地域<br></span>
+  <span class="line">やさしい訪問＆オンライン</span>
+</p>
+
+    </div>
+
+    <div id="guide" class="guide" hidden></div>
+  </div>
+</div>
+
+<script>
+  // 画像差し替え
+  document.getElementById('file').addEventListener('change', (e)=>{
+    const file = e.target.files[0]; if(!file) return;
+    const url = URL.createObjectURL(file);
+    const img = document.getElementById('logo');
+    img.onload = ()=> URL.revokeObjectURL(url);
+    img.src = url;
+  });
+
+  // 保存
+  document.getElementById('save').addEventListener('click', async ()=>{
+    const el = document.getElementById('stage');
+    // 2倍書き出しで高精細に
+    await html2canvas(el, {backgroundColor:null, scale:2, useCORS:true}).then(canvas=>{
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png'); a.download = 'ogp.png'; a.click();
+    });
+  });
+
+  // ガイドの表示切替
+  document.getElementById('toggleGuide').addEventListener('change', (e)=>{
+    document.getElementById('guide').hidden = !e.target.checked;
+  });
+</script>
+</body>
+</html>
